@@ -10,10 +10,8 @@ while user_input < 1:
         print('please use an interger')
         continue
 
-
 # for x in range (input - 1) since we wont be doing input x input at any point
 for x in range(user_input - 1):
     # counter times equal to int(x) + 1 to make up for the start at 0 method of computer counting
     user_input *= x + 1
-
-print(user_input)
+    print(user_input)
