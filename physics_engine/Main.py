@@ -20,21 +20,26 @@ pygame.display.set_caption('Physics engine')
 
 
  
-def gameloop():
+def gameloop():    
+    player = pygame.Rect(WINDOWWIDTH//2, WINDOWHEIGHT//2, 20, 20)
 
+
+    #displacement
+    current_pos = player.center
+    old_pos = (0, 0)
+    displacement = 0.0
+    tick_count_displacement = 0
 
     #gravity
     deltaTime = 0.0
     gravityAcceleration = -9.81 / 3
 
     font = pygame.font.Font('freesansbold.ttf', 15)
-    screen_text = ['Time delta:' + str(deltaTime), 'Gravity Acceleration:' + str(gravityAcceleration)]
-    screens = ['Time_delta', 'Gravity Acceleration']
+    screens = ['Time_delta', 'Gravity Acceleration', 'Displacement']
+    screens[2] = [font.render('Displacement between frames:' +str(displacement), True, (0,0,0)), (0,30)]
 
 
 
-
-    player = pygame.Rect(WINDOWWIDTH//2, WINDOWHEIGHT//2, 20, 20)
 
     getTicksLastFrame = pygame.time.get_ticks()
 
@@ -55,16 +60,28 @@ def gameloop():
         t = pygame.time.get_ticks()
         deltaTime = (t - getTicksLastFrame) / 1000.0
         getTicksLastFrame = t
+        tick_count_displacement += deltaTime
 
 
 
     # Draw the white background onto the surface.
         windowSurface.fill((255, 255, 255))
+
+
+        # calculates the displacement between frames
+        current_pos = player.center
+        displacement = (current_pos[0] - old_pos[0]) + (current_pos[1] - old_pos[1])
+        old_pos = current_pos
         
         # Draw the player onto the surface.
         pygame.draw.rect(windowSurface, (0, 0, 0), player)
-        screens[0] = [font.render('Time delta:' + str(deltaTime), True, (0,0,0)), (0,0)]
+        screens[0] = [font.render('Delta Time:' + str(deltaTime), True, (0,0,0)), (0,0)]
         screens[1] = [font.render('Gravity Acceleration:' + str(gravityAcceleration - (gravityAcceleration * 2)), True, (0,0,0)), (0,15)]
+
+        if displacement > 3 or displacement < 0 or tick_count > 0.5:
+            screens[2] = [font.render('Displacement between frames:' +str(displacement), True, (0,0,0)), (0,30)]
+            tick_count = 0
+
         for i in range(len(screens)):
             windowSurface.blit(screens[i][0], screens[i][1])
 
