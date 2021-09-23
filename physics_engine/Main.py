@@ -5,6 +5,8 @@ from datetime import *
 from pygame.locals import *
 import math
 
+
+
 # Set up pygame.
 pygame.init()
 mainClock = pygame.time.Clock()
@@ -12,28 +14,33 @@ mainClock = pygame.time.Clock()
 # Set up the window.
 WINDOWWIDTH = 700
 WINDOWHEIGHT = 500
-windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT), 0, 32)
+windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption('Physics engine')
  
+
+
  
-def movements():
-    player = pygame.Rect(WINDOWWIDTH/2, WINDOWHEIGHT/2, 20, 20)
+def gameloop():
+
 
     #gravity
-    player_mass = 250
-    speed = 0
-    old_position = (0, 0)
-    final_position = player.center
-    time_old = 0
-    time_current = float('0.' + datetime.now().strftime('%f'))
-    velocity = 0
+    deltaTime = 0.0
+    gravityAcceleration = -9.81 / 3
+
+    font = pygame.font.Font('freesansbold.ttf', 15)
+    screen_text = ['Time delta:' + str(deltaTime), 'Gravity Acceleration:' + str(gravityAcceleration)]
+    screens = ['Time_delta', 'Gravity Acceleration']
+
+
+
+
+    player = pygame.Rect(WINDOWWIDTH//2, WINDOWHEIGHT//2, 20, 20)
+
+    getTicksLastFrame = pygame.time.get_ticks()
 
     while True:
     # Check for events.
         for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
 
 
             #updates cube onto mouse position
@@ -43,25 +50,32 @@ def movements():
 
         # very basic gravity script
         if player.bottom < WINDOWHEIGHT:
-            player.y += 1
+            player.y -= gravityAcceleration
+
+        t = pygame.time.get_ticks()
+        deltaTime = (t - getTicksLastFrame) / 1000.0
+        getTicksLastFrame = t
 
 
-        if float('0.'+datetime.now().strftime('%f')) - time_old > 0.00000001 or time_old - float('0.'+datetime.now().strftime('%f')) > 0.00000001:
-            final_position = player.center
-            time_current = float('0.' + datetime.now().strftime('%f'))
 
-            print(round((final_position[0] - old_position[0])  / (float('0.'+datetime.now().strftime('%f')) - time_old), 2))
-
-        time_old = time_current
-        old_position = final_position
     # Draw the white background onto the surface.
         windowSurface.fill((255, 255, 255))
- 
+        
         # Draw the player onto the surface.
         pygame.draw.rect(windowSurface, (0, 0, 0), player)
+        screens[0] = [font.render('Time delta:' + str(deltaTime), True, (0,0,0)), (0,0)]
+        screens[1] = [font.render('Gravity Acceleration:' + str(gravityAcceleration - (gravityAcceleration * 2)), True, (0,0,0)), (0,15)]
+        for i in range(len(screens)):
+            windowSurface.blit(screens[i][0], screens[i][1])
+
+
+
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+
         # Draw the window onto the screen.
         pygame.display.update()
-        mainClock.tick(120)
+        mainClock.tick(60)
  
-if __name__ == "__main__":
-    movements()
+gameloop()
