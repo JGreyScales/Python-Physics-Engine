@@ -78,9 +78,9 @@ def gameloop():
         screens[0] = [font.render('Delta Time:' + str(deltaTime), True, (0,0,0)), (0,0)]
         screens[1] = [font.render('Gravity Acceleration:' + str(gravityAcceleration - (gravityAcceleration * 2)), True, (0,0,0)), (0,15)]
 
-        if displacement > 3 or displacement < 0 or tick_count > 0.5:
+        if displacement > 3 or displacement < 0 or tick_count_displacement > 0.35:
             screens[2] = [font.render('Displacement between frames:' +str(displacement), True, (0,0,0)), (0,30)]
-            tick_count = 0
+            tick_count_displacement = 0
 
         for i in range(len(screens)):
             windowSurface.blit(screens[i][0], screens[i][1])
