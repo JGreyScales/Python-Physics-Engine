@@ -10,16 +10,28 @@ mainClock = pygame.time.Clock()
  
 
 # Set up the window.
-WINDOWWIDTH = 500
-WINDOWHEIGHT = 300
+WINDOWWIDTH = 700
+WINDOWHEIGHT = 400
 windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption('Physics engine')
  
 
 def calculate_terminal_velocity(m, g, c, p, a): #Mass, Gravity, Coefficent, Density of air, Projected area
-    return math.sqrt((2*m*g)/(c*p*a))
+    print(g)
+    print("Python Program to calculate Terminal Velocity:") 
+    print("-------------------------------------------")
 
-    #print("Terminal Velocity  Calculated:   ", terminal_velocity)
+    print("Mass of the falling object:    ", m) 
+    print("Acceleration due to gravity: ", g) 
+    print("Drag coefficient:     ",c) 
+    print("Density of the fluid through which the object is falling:     ",p) 
+    print("Projected area of the object:     ",a) 
+
+    #TerminalVelocity = Vt = sqrt ( (2 * m * g) / (Cd * ρ * A))
+    terminal_velocity =  math.sqrt((2*m*g)/(c*p*a))
+
+    print('-------------------------------------------')
+    print("Terminal Velocity  Calculated:   ", terminal_velocity)
  
 def gameloop():    
     player = pygame.Rect(WINDOWWIDTH//2, WINDOWHEIGHT//2, 20, 20)
@@ -36,18 +48,19 @@ def gameloop():
     tick_count_displacement = 0
 
     #gravity
-    mass = 300 #
+    mass = 300
     deltaTime = 0.0
-    gravityAcceleration = 9.81 / 2 #
+    gravityAcceleration = -9.81 / 3
     velocity = 0
-    air_density = 1.225 #
-    projected_area = math.sqrt( list(player)[2] * list(player)[3])
-    terminal_velocity = calculate_terminal_velocity(mass, gravityAcceleration, 1.05, air_density, projected_area)
+    air_desinty = 1.225
+    projected_area = player.size()
+    print(projected_area)
+    calculate_terminal_velocity(mass, gravityAcceleration, 1.05, air_desinty, 20)
 
 
     font = pygame.font.Font('freesansbold.ttf', 15)
 
-    screens = ['Time_delta', 'Gravity Acceleration', 'Displacement', 'acceleration', 'GA','MSB','AD']
+    screens = ['Time_delta', 'Gravity Acceleration', 'Displacement', 'acceleration']
 
     screens[2] = [font.render('Displacement between frames:' +str(displacement), True, (0,0,0)), (0,30)]
     screens[3] = [font.render(f'Average Velocity is: {acceleration}pixels/5seconds', True, (128,45,45)), (0,45)]
@@ -64,28 +77,13 @@ def gameloop():
                 sys.exit()
             #updates cube onto mouse position
             if event.type == pygame.MOUSEBUTTONDOWN:
-              #button #1 event
-                if b1.collidepoint(event.pos):
-                  gravityAcceleration = int(input("What do you want the Gravity Acceleration to be? "))
-                  terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
-                elif b2.collidepoint(event.pos):
-                  mass = int(input("What do you want the Mass to be? "))
-                  terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
-                elif b3.collidepoint(event.pos):
-                  mass = int(input("What do you want the Air Density to be? "))
-                  terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
-                else:
-                  player.center = pygame.mouse.get_pos()
-                  velocity = 0
+                player.center = pygame.mouse.get_pos()
+                velocity = 0
  
 
         # very basic gravity script
         if player.bottom < WINDOWHEIGHT:
-          if velocity <= -terminal_velocity:
-            velocity = -terminal_velocity
-            player.y -= velocity
-          elif velocity > -terminal_velocity:
-            velocity -= gravityAcceleration * deltaTime / 1.05 
+            velocity += gravityAcceleration * deltaTime
             player.y -= velocity
 
         t = pygame.time.get_ticks()
@@ -131,42 +129,17 @@ def gameloop():
 
             acceleration_list = []
             acceleration_count = 0
-            
-            #button creation
-        bd1 = pygame.Rect(WINDOWWIDTH - 65, 5, 60, 30)
-        b1 = pygame.Rect(WINDOWWIDTH - 63, 7, 56, 26)
-
-        bd2 = pygame.Rect(WINDOWWIDTH - 65, 40, 60, 30)
-        b2 = pygame.Rect(WINDOWWIDTH - 63, 42, 56, 26)
-
-        bd3 = pygame.Rect(WINDOWWIDTH - 65, 75, 60, 30)
-        b3 = pygame.Rect(WINDOWWIDTH - 63, 77, 56, 26)
-
 
         # Draw the player onto the surface.
         pygame.draw.rect(windowSurface, (0, 0, 0), player)
         screens[0] = [font.render('Delta Time:' + str(deltaTime), True, (0,0,0)), (0,0)]
-        screens[1] = [font.render('Gravity Acceleration:' + str(gravityAcceleration), True, (0,0,0)), (0,15)]
+        screens[1] = [font.render('Gravity Acceleration:' + str(gravityAcceleration - (gravityAcceleration * 2)), True, (0,0,0)), (0,15)]
 
         if displacement > 3 or displacement < 0 or tick_count_displacement > 0.35:
             screens[2] = [font.render('Displacement between frames:' +str(displacement), True, (0,0,0)), (0,30)]
 
             tick_count_displacement = 0
 
-      
-        screens[4] = [font.render('GA', True,(0,0,0)),(b1.centerx-20, b1.centery-5)]
-        screens[5] = [font.render('MS', True, (0,0,0)),(b2.centerx-20, b2.centery-5)]
-        screens[6] = [font.render('AD', True, (0,0,0)),(b3.centerx-20, b3.centery-5)]
-
-        #draws buttons on the screen
-        pygame.draw.rect(windowSurface, (0, 0, 0), bd1)
-        pygame.draw.rect(windowSurface, (255, 255, 255), b1)
-
-        pygame.draw.rect(windowSurface, (0, 0, 0), bd2)
-        pygame.draw.rect(windowSurface, (255, 255, 255), b2)
-
-        pygame.draw.rect(windowSurface, (0, 0, 0), bd3)
-        pygame.draw.rect(windowSurface, (255, 255, 255), b3)
 
         for i in range(len(screens)):
             windowSurface.blit(screens[i][0], screens[i][1])
