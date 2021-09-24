@@ -16,12 +16,13 @@ windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption('Physics engine')
  
 
+## calculates and returns terminal velocity 
 def calculate_terminal_velocity(m, g, c, p, a): #Mass, Gravity, Coefficent, Density of air, Projected area
     return math.sqrt((2*m*g)/(c*p*a))
 
-    #print("Terminal Velocity  Calculated:   ", terminal_velocity)
  
 def gameloop():    
+    ## defines player start position and size (Width, Height)
     player = pygame.Rect(WINDOWWIDTH//2, WINDOWHEIGHT//2, 20, 20)
 
     #acceleration
@@ -44,27 +45,30 @@ def gameloop():
     projected_area = math.sqrt( list(player)[2] * list(player)[3])
     terminal_velocity = calculate_terminal_velocity(mass, gravityAcceleration, 1.05, air_density, projected_area)
 
-
+    #font to use for entire game
     font = pygame.font.Font('freesansbold.ttf', 15)
 
+    # temp strings to increase range of list
     screens = ['Time_delta', 'Gravity Acceleration', 'Displacement', 'acceleration', 'GA','MSB','AD']
 
+    # these screens in milliseconds not in frames so must be redefined before the render is called
     screens[2] = [font.render('Displacement between frames:' +str(displacement), True, (0,0,0)), (0,30)]
     screens[3] = [font.render(f'Average Velocity is: {acceleration}pixels/5seconds', True, (128,45,45)), (0,45)]
 
+    # gets the amount of ticks that occured last frame
     getTicksLastFrame = pygame.time.get_ticks()
 
+    #main gameloop
     while True:
         
     # Check for events.
         for event in pygame.event.get():
-
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
             #updates cube onto mouse position
             if event.type == pygame.MOUSEBUTTONDOWN:
-              #button #1 event
+              #updates variable and recalculates terminal_velocity
                 if b1.collidepoint(event.pos):
                     try:
                         gravityAcceleration = float(input("What do you want the Gravity Acceleration to be? "))
@@ -83,22 +87,27 @@ def gameloop():
                         terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
                     except(ValueError):
                         print('please use a float')
+                # physics object or "player" will move to mouse position and resets the velocity on object
                 else:
                   player.center = pygame.mouse.get_pos()
                   velocity = 0
  
 
-        # very basic gravity script
+        # if the player is not on the bottom of the screen
         if player.bottom < WINDOWHEIGHT:
+            # if velocity has hit or is equal to terminal_velocity 
           if velocity <= -terminal_velocity:
             velocity = -terminal_velocity
             player.y -= velocity
+            # if velocity is less then terminal_velocity
           elif velocity > -terminal_velocity:
             velocity -= gravityAcceleration * deltaTime / 1.05 
             player.y -= velocity
+        # is a check to stop clipping through the bottom of the screen
         elif player.bottom > WINDOWHEIGHT:
             player.bottom = WINDOWHEIGHT
 
+        # basic time delta script to calculate the delta between frames
         t = pygame.time.get_ticks()
         deltaTime = (t - getTicksLastFrame) / 1000.0
         getTicksLastFrame = t
@@ -115,7 +124,6 @@ def gameloop():
         # calculates the displacement between frames
         current_pos = player.center
         displacement = math.sqrt((current_pos[0] - old_pos[0])** 2 + (current_pos[1] - old_pos[1])**2)
-        print(displacement)
         if displacement < -0:
             acceleration_list.append(displacement - (displacement * 2))
         else:
@@ -130,12 +138,8 @@ def gameloop():
             acceleration /= len(acceleration_list)
             acceleration = round(acceleration /  2.5, 2)
 
-
-
-            ## to be removed with terminal velocity added
             if acceleration == 0:
               velocity = 0
-            ## to be removed with terminal velocity added
 
             
 
@@ -165,7 +169,7 @@ def gameloop():
 
             tick_count_displacement = 0
 
-      
+      # font rendering for buttons
         screens[4] = [font.render('GA', True,(0,0,0)),(b1.centerx-20, b1.centery-5)]
         screens[5] = [font.render('MS', True, (0,0,0)),(b2.centerx-20, b2.centery-5)]
         screens[6] = [font.render('AD', True, (0,0,0)),(b3.centerx-20, b3.centery-5)]
@@ -180,16 +184,18 @@ def gameloop():
         pygame.draw.rect(windowSurface, (0, 0, 0), bd3)
         pygame.draw.rect(windowSurface, (255, 255, 255), b3)
 
+        # render loop (will iterate through all items that need to be rendered and render them)
         for i in range(len(screens)):
             windowSurface.blit(screens[i][0], screens[i][1])
 
         if event.type == QUIT:
             pygame.quit()
-            sys.exit()
+            sys.exit()       
         else:
 
         # Draw the window onto the screen.
             pygame.display.update()
         mainClock.tick(60)
  
+ # init of gameloop
 gameloop()
