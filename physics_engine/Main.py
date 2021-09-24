@@ -13,7 +13,7 @@ mainClock = pygame.time.Clock()
  
 # Set up the window.
 WINDOWWIDTH = 700
-WINDOWHEIGHT = 500
+WINDOWHEIGHT = 425
 windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption('Physics engine')
  
@@ -31,7 +31,7 @@ def gameloop():
     #displacement
     current_pos = player.center
     old_pos = (0, 0)
-    displacement = 0.0
+    displacement = 0.1
     tick_count_displacement = 0
 
     #gravity
@@ -61,6 +61,7 @@ def gameloop():
             #updates cube onto mouse position
             if event.type == pygame.MOUSEBUTTONDOWN:
                 player.center = pygame.mouse.get_pos()
+                velocity = 0
  
 
         # very basic gravity script
@@ -98,6 +99,15 @@ def gameloop():
             acceleration /= len(acceleration_list)
             acceleration = round(acceleration /  5, 2)
 
+
+
+            ## to be removed with terminal velocity added
+            if acceleration == 0:
+              velocity = 0
+            ## to be removed with terminal velocity added
+
+            
+
             screens[3] = [font.render(f'Average Acceleration is: {acceleration}pixels/2.5seconds', True, (128,0,0)), (0,45)]
 
             acceleration_list = []
@@ -122,9 +132,10 @@ def gameloop():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
+        else:
 
         # Draw the window onto the screen.
-        pygame.display.update()
+            pygame.display.update()
         mainClock.tick(60)
  
 gameloop()
