@@ -66,14 +66,23 @@ def gameloop():
             if event.type == pygame.MOUSEBUTTONDOWN:
               #button #1 event
                 if b1.collidepoint(event.pos):
-                  gravityAcceleration = int(input("What do you want the Gravity Acceleration to be? "))
-                  terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
+                    try:
+                        gravityAcceleration = float(input("What do you want the Gravity Acceleration to be? "))
+                        terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
+                    except(ValueError):
+                        print('Please use a float')
                 elif b2.collidepoint(event.pos):
-                  mass = int(input("What do you want the Mass to be? "))
-                  terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
+                    try:
+                        mass = float(input("What do you want the Mass to be? "))
+                        terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
+                    except(ValueError):
+                        print('please use a float')
                 elif b3.collidepoint(event.pos):
-                  mass = int(input("What do you want the Air Density to be? "))
-                  terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
+                    try:
+                        mass = float(input("What do you want the Air Density to be? "))
+                        terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
+                    except(ValueError):
+                        print('please use a float')
                 else:
                   player.center = pygame.mouse.get_pos()
                   velocity = 0
@@ -87,6 +96,8 @@ def gameloop():
           elif velocity > -terminal_velocity:
             velocity -= gravityAcceleration * deltaTime / 1.05 
             player.y -= velocity
+        elif player.bottom > WINDOWHEIGHT:
+            player.bottom = WINDOWHEIGHT
 
         t = pygame.time.get_ticks()
         deltaTime = (t - getTicksLastFrame) / 1000.0
@@ -103,9 +114,10 @@ def gameloop():
 
         # calculates the displacement between frames
         current_pos = player.center
-        displacement = (current_pos[0] - old_pos[0]) + (current_pos[1] - old_pos[1])
-        if displacement < 0:
-            acceleration_list.append(abs(displacement))
+        displacement = math.sqrt((current_pos[0] - old_pos[0])** 2 + (current_pos[1] - old_pos[1])**2)
+        print(displacement)
+        if displacement < -0:
+            acceleration_list.append(displacement - (displacement * 2))
         else:
             acceleration_list.append(displacement)
         old_pos = current_pos
