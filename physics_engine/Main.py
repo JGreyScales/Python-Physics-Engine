@@ -3,6 +3,11 @@ import pygame, sys, math
 import time as time2
 from datetime import *
 from pygame.locals import *
+import tkinter
+
+root = tkinter.Tk()
+root.withdraw()
+MWIDTH, MHEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
 # Set up pygame.
 pygame.init()
@@ -10,8 +15,8 @@ mainClock = pygame.time.Clock()
  
 
 # Set up the window.
-WINDOWWIDTH = 500
-WINDOWHEIGHT = 300
+WINDOWWIDTH = MWIDTH - 75
+WINDOWHEIGHT = MHEIGHT - 100
 windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption('Physics engine')
  
