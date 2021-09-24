@@ -50,6 +50,8 @@ def gameloop():
 
     getTicksLastFrame = pygame.time.get_ticks()
 
+
+##game loop
     while True:
         
     # Check for events.
