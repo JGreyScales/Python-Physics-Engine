@@ -49,7 +49,7 @@ def gameloop():
     font = pygame.font.Font('freesansbold.ttf', 15)
 
     # temp strings to increase range of list
-    screens = ['Time_delta', 'Gravity Acceleration', 'Displacement', 'acceleration', 'GA','MSB','AD']
+    screens = ['Time_delta', 'Gravity Acceleration', 'Displacement', 'acceleration','GA', 'MS', 'AD']
 
     # these screens in milliseconds not in frames so must be redefined before the render is called
     screens[2] = [font.render('Displacement between frames:' +str(displacement), True, (0,0,0)), (0,30)]
@@ -165,7 +165,7 @@ def gameloop():
         screens[1] = [font.render('Gravity Acceleration:' + str(gravityAcceleration), True, (0,0,0)), (0,15)]
 
         if displacement > 3 or displacement < 0 or tick_count_displacement > 0.35:
-            screens[2] = [font.render('Displacement between frames:' +str(displacement), True, (0,0,0)), (0,30)]
+            screens[2] = [font.render('Displacement between frames:' +str(round(displacement, 2)), True, (0,0,0)), (0,30)]
 
             tick_count_displacement = 0
 
