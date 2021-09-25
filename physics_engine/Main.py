@@ -80,19 +80,19 @@ def gameloop():
                 if b1.collidepoint(event.pos):
                     try:
                         gravityAcceleration = float(input("What do you want the Gravity Acceleration to be? "))
-                        terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
+                        terminal_velocity = formula.calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
                     except(ValueError):
                         print('Please use a float')
                 elif b2.collidepoint(event.pos):
                     try:
                         mass = float(input("What do you want the Mass to be? "))
-                        terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
+                        terminal_velocity = formula.calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
                     except(ValueError):
                         print('please use a float')
                 elif b3.collidepoint(event.pos):
                     try:
                         mass = float(input("What do you want the Air Density to be? "))
-                        terminal_velocity = calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
+                        terminal_velocity = formula.calculate_terminal_velocity(mass,gravityAcceleration, 1.05, air_density, projected_area)
                     except(ValueError):
                         print('please use a float')
                 # physics object or "player" will move to mouse position and resets the velocity on object
