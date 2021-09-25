@@ -19,13 +19,13 @@ WINDOWWIDTH = MWIDTH - 75
 WINDOWHEIGHT = MHEIGHT - 100
 windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption('Physics engine')
- 
+
 
 ## calculates and returns terminal velocity 
 def calculate_terminal_velocity(m, g, c, p, a): #Mass, Gravity, Coefficent, Density of air, Projected area
     return math.sqrt((2*m*g)/(c*p*a))
 
- 
+
 def gameloop():    
     ## defines player start position and size (Width, Height)
     player = pygame.Rect(WINDOWWIDTH//2, WINDOWHEIGHT//2, 20, 20)
@@ -52,6 +52,7 @@ def gameloop():
 
     #font to use for entire game
     font = pygame.font.Font('freesansbold.ttf', 15)
+    button_font = pygame.font.Font('freesansbold.ttf', 10)
 
     # temp strings to increase range of list
     screens = ['Time_delta', 'Gravity Acceleration', 'Displacement', 'acceleration','GA', 'MS', 'AD']
@@ -120,8 +121,6 @@ def gameloop():
         acceleration_count += deltaTime
 
 
-
-
     # Draw the white background onto the surface.
         windowSurface.fill((255, 255, 255))
 
@@ -143,10 +142,7 @@ def gameloop():
             acceleration /= len(acceleration_list)
             acceleration = round(acceleration /  2.5, 2)
 
-            if acceleration == 0:
-              velocity = 0
 
-            
 
             screens[3] = [font.render(f'Average Acceleration is: {acceleration}pixels/2.5seconds', True, (128,0,0)), (0,45)]
 
@@ -175,9 +171,9 @@ def gameloop():
             tick_count_displacement = 0
 
       # font rendering for buttons
-        screens[4] = [font.render('GA', True,(0,0,0)),(b1.centerx-20, b1.centery-5)]
-        screens[5] = [font.render('MS', True, (0,0,0)),(b2.centerx-20, b2.centery-5)]
-        screens[6] = [font.render('AD', True, (0,0,0)),(b3.centerx-20, b3.centery-5)]
+        screens[4] = [button_font.render('Gravity', True,(0,0,0)),(b1.centerx-15, b1.centery-5)]
+        screens[5] = [button_font.render('Mass', True, (0,0,0)),(b2.centerx-12, b2.centery-5)]
+        screens[6] = [button_font.render('Air Drag', True, (0,0,0)),(b3.centerx-20, b3.centery-5)]
 
         #draws buttons on the screen
         pygame.draw.rect(windowSurface, (0, 0, 0), bd1)
