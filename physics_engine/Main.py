@@ -1,9 +1,13 @@
 from typing import final
-import pygame, sys, math
+import pygame, sys, math, tkinter
 import time as time2
 from datetime import *
 from pygame.locals import *
-import tkinter
+
+from Assets.forumulas import formulas as formula
+
+
+formula = formula()
 
 root = tkinter.Tk()
 root.withdraw()
@@ -21,9 +25,7 @@ windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption('Physics engine')
 
 
-## calculates and returns terminal velocity 
-def calculate_terminal_velocity(m, g, c, p, a): #Mass, Gravity, Coefficent, Density of air, Projected area
-    return math.sqrt((2*m*g)/(c*p*a))
+
 
 
 def gameloop():    
@@ -48,7 +50,7 @@ def gameloop():
     velocity = 0
     air_density = 1.225 #
     projected_area = math.sqrt( list(player)[2] * list(player)[3])
-    terminal_velocity = calculate_terminal_velocity(mass, gravityAcceleration, 1.05, air_density, projected_area)
+    terminal_velocity = formula.calculate_terminal_velocity(mass, gravityAcceleration, 1.05, air_density, projected_area)
 
     #font to use for entire game
     font = pygame.font.Font('freesansbold.ttf', 15)
@@ -129,7 +131,7 @@ def gameloop():
         current_pos = player.center
         displacement = math.sqrt((current_pos[0] - old_pos[0])** 2 + (current_pos[1] - old_pos[1])**2)
         if displacement < -0:
-            acceleration_list.append(displacement - (displacement * 2))
+            acceleration_list.append(formula.inverse(displacement))
         else:
             acceleration_list.append(displacement)
         old_pos = current_pos
