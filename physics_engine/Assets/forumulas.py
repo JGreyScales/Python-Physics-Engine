@@ -4,7 +4,12 @@ class formulas:
         pass
 
     # returns an inverse of i
-    def inverse(i):
+    def inverse(self, i):
+        return i - (i * 2)
+
+    def to_positive(self, i):
+        if i > 0:
+            return i
         return i - (i * 2)
 
     ## calculates and returns terminal velocity 
