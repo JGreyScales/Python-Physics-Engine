@@ -94,17 +94,16 @@ def gameloop():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.WINDOWSIZECHANGED:
-                width_size, height_size = windowSurface.get_size()[0] / start_width, windowSurface.get_size()[1] / start_height
+                current_width = windowSurface.get_size()[0]
+                current_height = windowSurface.get_size()[1]
+                width_size, height_size = current_width / start_width, current_height / start_height
                 if height_size < 0:
                     height_size = formula.inverse(10 / height_size)
                 if width_size < 0:
-                    width_size = formula.inverse(10 / width_size)
-                    width_size += 1
-                current_width = windowSurface.get_size()[0]
-                current_height = windowSurface.get_size()[1]
+                    width_size = formula.inverse(10 / width_size) + 1
+
                 font = pygame.font.Font('freesansbold.ttf', round(15 * (width_size * height_size)))
                 button_font = pygame.font.Font('freesansbold.ttf', round(10 * (width_size * height_size)))
-                print(width_size * height_size)
             #updates cube onto mouse position
             if event.type == pygame.MOUSEBUTTONDOWN:
                 #updates variable and recalculates terminal_velocity
