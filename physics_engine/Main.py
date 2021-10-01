@@ -1,8 +1,4 @@
-from typing import final
 import pygame, sys, math, tkinter
-import time as time2
-from datetime import *
-from pygame.locals import *
 
 from Assets.forumulas import formulas as formula
 
@@ -39,7 +35,8 @@ def gameloop():
     width_size, height_size = 1,1
 
     #velocity
-    movement_vectors = (0, 0)
+    vertical_velocity = 0
+    horizontal_velocity = 0
 
     #acceleration
     acceleration_count = 0
@@ -87,12 +84,14 @@ def gameloop():
 
     #main gameloop
     while True:
+        current_pos = player.center
+
+        b1 = pygame.Rect(current_width - 63, 7, 56, 26)
+        b2 = pygame.Rect(current_width - 63, 42, 56, 26)
+        b3 = pygame.Rect(current_width - 63, 77, 56, 26)
 
         # Check for events.
         for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
             if event.type == pygame.WINDOWSIZECHANGED:
                 current_width = windowSurface.get_size()[0]
                 current_height = windowSurface.get_size()[1]
@@ -140,22 +139,50 @@ def gameloop():
                 else:
                     player.center = pygame.mouse.get_pos()
                     velocity = 0
+                    vertical_velocity = 0
+                    horizontal_velocity = 0
             # checks if player is holding down left click
         if pygame.mouse.get_pressed()[0]:
             player.center = pygame.mouse.get_pos()
             velocity = 0
-            if pygame.mouse.get_rel()[0] + pygame.mouse.get_rel()[1] != 0:
-                movement_vectors = displacement
+            vertical_velocity = 0
+            horizontal_velocity = 0
+            movement = pygame.mouse.get_rel() 
+            if movement != (0, 0):
+              vertical_velocity = movement[1]
+              horizontal_velocity = movement[0]
+            
         else:
-          if movement_vectors != 0:
-            #code to throw object base on stored values
-            #avg of movement vectors in past frame displacement = velocity.
-            # 
-            # also need to add a ticker so item loses velocity after
-            #being held still
-            pass
+          if vertical_velocity != 0:
+            if vertical_velocity > 0 :
+              player.y += vertical_velocity
+              vertical_velocity -= air_density
+              if vertical_velocity <= 0:
+                vertical_velocity = 0
+            else:
+              player.y += vertical_velocity
+              vertical_velocity += gravityAcceleration * air_density
+              if vertical_velocity >= 0:
+                vertical_velocity = 0
 
-          movement_vectors = []
+          if horizontal_velocity != 0:
+            if horizontal_velocity > 0:
+              player.x += horizontal_velocity / 1.5
+              horizontal_velocity -= air_density + gravityAcceleration
+              if horizontal_velocity <= 0:
+                horizontal_velocity = 0
+            else:
+              player.x += horizontal_velocity / 1.5
+              horizontal_velocity += air_density + gravityAcceleration
+              if horizontal_velocity >= 0:
+               horizontal_velocity = 0
+
+
+          #code to reset velocities if not movng
+          if old_pos == current_pos:
+            vertical_velocity = 0
+            horizontal_velocity = 0
+
           
 
         # if the player is not on the bottom of the screen
@@ -181,14 +208,13 @@ def gameloop():
         t = pygame.time.get_ticks()
         deltaTime = (t - getTicksLastFrame) / 1000.0
         getTicksLastFrame = t
+
         tick_count_displacement += deltaTime
         acceleration_count += deltaTime
 
         # Draw the white background onto the surface.
         windowSurface.fill((255, 255, 255))
-
         # calculates the displacement between frames
-        current_pos = player.center
         displacement = math.sqrt((current_pos[0] - old_pos[0])**2 +
                                  (current_pos[1] - old_pos[1])**2)
         if displacement != 0:
@@ -219,13 +245,10 @@ def gameloop():
 
             #button creation
         bd1 = pygame.Rect((current_width - 65), 5, 60, 30)
-        b1 = pygame.Rect(current_width - 63, 7, 56, 26)
 
         bd2 = pygame.Rect(current_width - 65, 40, 60, 30)
-        b2 = pygame.Rect(current_width - 63, 42, 56, 26)
 
         bd3 = pygame.Rect(current_width - 65, 75, 60, 30)
-        b3 = pygame.Rect(current_width - 63, 77, 56, 26)
 
         # Draw the player onto the surface.
         pygame.draw.rect(windowSurface, (0, 0, 0), player)
@@ -275,19 +298,12 @@ def gameloop():
 
         # render loop (will iterate through all items that need to be rendered and render them)
         for i in range(len(screens)):
-            windowSurface.blit(screens[i][0], screens[i][1])
+          windowSurface.blit(screens[i][0], screens[i][1])
 
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        else:
 
             # Draw the window onto the screen.
-            pygame.display.update()
-        mainClock.tick(144)
+        pygame.display.update()
+        mainClock.tick(70)
             
-
-
-
 # init of gameloop
 gameloop()
