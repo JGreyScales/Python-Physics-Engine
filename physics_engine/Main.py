@@ -37,6 +37,7 @@ def gameloop():
     #velocity
     vertical_velocity = 0
     horizontal_velocity = 0
+    velocity_reset_tick = 0
 
     #acceleration
     acceleration_count = 0
@@ -179,9 +180,10 @@ def gameloop():
 
 
           #code to reset velocities if not movng
-          if old_pos == current_pos:
+          if old_pos == current_pos and velocity_reset_tick > 0.3: 
             vertical_velocity = 0
             horizontal_velocity = 0
+            velocity_reset_tick = 0
 
           
 
@@ -211,6 +213,7 @@ def gameloop():
 
         tick_count_displacement += deltaTime
         acceleration_count += deltaTime
+        velocity_reset_tick += deltaTime
 
         # Draw the white background onto the surface.
         windowSurface.fill((255, 255, 255))
