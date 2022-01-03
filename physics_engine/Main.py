@@ -9,6 +9,7 @@ print(
     '\nclick the buttons on the right side to change variables inside the program and see how they affect the physics object'
 )
 
+# function definements
 formula = formula()
 
 root = tkinter.Tk()
@@ -19,12 +20,15 @@ root.withdraw()
 pygame.init()
 mainClock = pygame.time.Clock()
 
+
 # Set up the window.
 start_width, start_height = round(root.winfo_screenwidth() * 0.9), round(root.winfo_screenheight() * 0.9)
 windowSurface = pygame.display.set_mode((start_width, start_height), pygame.RESIZABLE)
 pygame.display.set_caption('Physics engine')
 current_width = start_width
 current_height = start_height
+
+
 
 
 def gameloop():
@@ -83,6 +87,8 @@ def gameloop():
     # gets the amount of ticks that occured last frame
     getTicksLastFrame = pygame.time.get_ticks()
 
+
+
     #main gameloop
     while True:
         current_pos = player.center
@@ -91,8 +97,11 @@ def gameloop():
         b2 = pygame.Rect(current_width - 63, 42, 56, 26)
         b3 = pygame.Rect(current_width - 63, 77, 56, 26)
 
+
         # Check for events.
         for event in pygame.event.get():
+            if event.type == pygame.QUIT: sys.exit()
+
             if event.type == pygame.WINDOWSIZECHANGED:
                 current_width = windowSurface.get_size()[0]
                 current_height = windowSurface.get_size()[1]
@@ -104,9 +113,11 @@ def gameloop():
 
                 font = pygame.font.Font('freesansbold.ttf', round(15 * (width_size * height_size)))
                 button_font = pygame.font.Font('freesansbold.ttf', round(10 * (width_size * height_size)))
+
             #updates cube onto mouse position
             if event.type == pygame.MOUSEBUTTONDOWN:
                 #updates variable and recalculates terminal_velocity
+
                 if b1.collidepoint(event.pos):
                     try:
                         gravityAcceleration = float(
@@ -118,7 +129,9 @@ def gameloop():
                             projected_area)
                     except (ValueError):
                         print('Please use a float')
+
                 elif b2.collidepoint(event.pos):
+
                     try:
                         mass = float(
                             input("What do you want the Mass to be? "))
@@ -127,7 +140,9 @@ def gameloop():
                             projected_area)
                     except (ValueError):
                         print('please use a float')
+
                 elif b3.collidepoint(event.pos):
+
                     try:
                         mass = float(
                             input("What do you want the Air Density to be? "))
@@ -136,12 +151,14 @@ def gameloop():
                             projected_area)
                     except (ValueError):
                         print('please use a float')
+
                 # physics object or "player" will move to mouse position and resets the velocity on object
                 else:
                     player.center = pygame.mouse.get_pos()
                     velocity = 0
                     vertical_velocity = 0
                     horizontal_velocity = 0
+
             # checks if player is holding down left click
         if pygame.mouse.get_pressed()[0]:
             player.center = pygame.mouse.get_pos()
@@ -154,27 +171,38 @@ def gameloop():
               horizontal_velocity = movement[0]
             
         else:
+
           if vertical_velocity != 0:
+
             if vertical_velocity > 0 :
+
               player.y += vertical_velocity
               vertical_velocity -= air_density
+
               if vertical_velocity <= 0:
                 vertical_velocity = 0
+
             else:
               player.y += vertical_velocity
               vertical_velocity += gravityAcceleration * air_density
+
               if vertical_velocity >= 0:
                 vertical_velocity = 0
 
           if horizontal_velocity != 0:
+
             if horizontal_velocity > 0:
+
               player.x += horizontal_velocity / 1.5
               horizontal_velocity -= air_density + gravityAcceleration
+
               if horizontal_velocity <= 0:
                 horizontal_velocity = 0
+
             else:
               player.x += horizontal_velocity / 1.5
               horizontal_velocity += air_density + gravityAcceleration
+
               if horizontal_velocity >= 0:
                horizontal_velocity = 0
 
@@ -189,20 +217,24 @@ def gameloop():
 
         # if the player is not on the bottom of the screen
         if player.bottom < current_height:
+
             # if velocity has hit or is equal to terminal_velocity
             if velocity <= -terminal_velocity:
                 velocity = -terminal_velocity * deltaTime
                 player.y -= velocity
+
                 # if velocity is less then terminal_velocity
             elif velocity > -terminal_velocity:
                 velocity -= gravityAcceleration * deltaTime / 1.05
                 player.y -= velocity
+
         # is a check to stop clipping through the bottom of the screen
         elif player.bottom > current_height:
             player.bottom = current_height
 
         if player.right > current_width:
             player.right = current_width
+
         elif player.left < 0:
             player.left = 0
 
@@ -217,23 +249,30 @@ def gameloop():
 
         # Draw the white background onto the surface.
         windowSurface.fill((255, 255, 255))
+
         # calculates the displacement between frames
         displacement = math.sqrt((current_pos[0] - old_pos[0])**2 +
                                  (current_pos[1] - old_pos[1])**2)
         if displacement != 0:
+
             if displacement < -0:
+
                 acceleration_list.append(formula.inverse(displacement))
+
             else:
                 acceleration_list.append(displacement)
         old_pos = current_pos
 
         # every 2.5 seconds will update the average accelearation the physiscs object has moved in pixels
         if acceleration_count > 2.5:
+
             for displacement in acceleration_list:
                 acceleration += displacement
+
             if len(acceleration_list) != 0:
                 acceleration /= len(acceleration_list)
                 acceleration = round(acceleration / 2.5, 2)
+
             else:
                 acceleration = 0
 
