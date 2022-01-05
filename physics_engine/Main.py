@@ -5,8 +5,9 @@ from Assets.forumulas import formulas as formula
 print(
     'all code can be found on https://github.com/JGreyScales/School-11/tree/main/physics_engine',
     '\n\n' + '-' * 50 +
-    '\nTo use this program just left click the screen or left click and drag the screen to move the box, you can' +
-    '\nclick the buttons on the right side to change variables inside the program and see how they affect the physics object'
+    '\nThe following program is a simple to use physics engine.'
+    '\nJust start by clicking or clicking and draging around the screen to summon or grab the block,' 
+    '\nafter this you can throw the block around or drop it, by unclicking. You can also change the gravity, mass, and air drag in the simulation by clicking the appropirate button and changing the value in the console.'
 )
 
 # function definements
@@ -41,6 +42,8 @@ def gameloop():
     #velocity
     vertical_velocity = 0
     horizontal_velocity = 0
+    
+    # is a counter for when to reset velocity
     velocity_reset_tick = 0
 
     #acceleration
@@ -52,17 +55,18 @@ def gameloop():
     current_pos = player.center
     old_pos = (0, 0)
     displacement = 0.1
+    # is a counter to reset displacement amount
     tick_count_displacement = 0
 
     #gravity
     mass = 300  #
-    deltaTime = 0.0
-    gravityAcceleration = 9.81  #
+    delta_time = 0.0
+    gravity_acceleration = 9.81  #
     velocity = 0
     air_density = 1.225  #
     projected_area = math.sqrt(list(player)[2] * list(player)[3])
     terminal_velocity = formula.calculate_terminal_velocity(
-        mass, gravityAcceleration, 1.05, air_density, projected_area)
+        mass, gravity_acceleration, 1.05, air_density, projected_area)
 
     #font to use for entire game
     font = pygame.font.Font('freesansbold.ttf', 15)
@@ -85,17 +89,18 @@ def gameloop():
     ]
 
     # gets the amount of ticks that occured last frame
-    getTicksLastFrame = pygame.time.get_ticks()
+    get_ticks_last_frame = pygame.time.get_ticks()
 
 
 
     #main gameloop
     while True:
         current_pos = player.center
+        box_width, box_height = 56, 26
 
-        b1 = pygame.Rect(current_width - 63, 7, 56, 26)
-        b2 = pygame.Rect(current_width - 63, 42, 56, 26)
-        b3 = pygame.Rect(current_width - 63, 77, 56, 26)
+        b1 = pygame.Rect(current_width - 63, 7, box_width, box_height)
+        b2 = pygame.Rect(current_width - 63, 42, box_width, box_height)
+        b3 = pygame.Rect(current_width - 63, 77, box_width, box_height)
 
 
         # Check for events.
@@ -120,35 +125,35 @@ def gameloop():
 
                 if b1.collidepoint(event.pos):
                     try:
-                        gravityAcceleration = float(
+                        gravity_acceleration = float(
                             input(
                                 "What do you want the Gravity Acceleration to be? "
                             ))
-                        terminal_velocity = formula.calculate_terminal_velocity(
-                            mass, gravityAcceleration, 1.05, air_density,
-                            projected_area)
+                        
                     except (ValueError):
                         print('Please use a float')
 
                 elif b2.collidepoint(event.pos):
-
+                  while True:
                     try:
                         mass = float(
                             input("What do you want the Mass to be? "))
-                        terminal_velocity = formula.calculate_terminal_velocity(
-                            mass, gravityAcceleration, 1.05, air_density,
-                            projected_area)
+                        if mass < 1:
+                          continue
+                        break
+            
                     except (ValueError):
                         print('please use a float')
 
                 elif b3.collidepoint(event.pos):
-
+                  while True:
                     try:
-                        mass = float(
+                        air_density = float(
                             input("What do you want the Air Density to be? "))
-                        terminal_velocity = formula.calculate_terminal_velocity(
-                            mass, gravityAcceleration, 1.05, air_density,
-                            projected_area)
+                        if air_density < 1:
+                          continue
+                        break
+
                     except (ValueError):
                         print('please use a float')
 
@@ -158,6 +163,10 @@ def gameloop():
                     velocity = 0
                     vertical_velocity = 0
                     horizontal_velocity = 0
+                    
+                terminal_velocity = formula.calculate_terminal_velocity(
+                mass, gravity_acceleration, 1.05, air_density,
+                projected_area)
 
             # checks if player is holding down left click
         if pygame.mouse.get_pressed()[0]:
@@ -171,38 +180,25 @@ def gameloop():
               horizontal_velocity = movement[0]
             
         else:
-
           if vertical_velocity != 0:
-
             if vertical_velocity > 0 :
-
               player.y += vertical_velocity
-              vertical_velocity -= air_density
-
-              if vertical_velocity <= 0:
-                vertical_velocity = 0
+              vertical_velocity -= air_density + gravity_acceleration
 
             else:
               player.y += vertical_velocity
-              vertical_velocity += gravityAcceleration * air_density
-
+              vertical_velocity += gravity_acceleration * air_density
               if vertical_velocity >= 0:
                 vertical_velocity = 0
-
           if horizontal_velocity != 0:
-
             if horizontal_velocity > 0:
-
               player.x += horizontal_velocity / 1.5
-              horizontal_velocity -= air_density + gravityAcceleration
-
+              horizontal_velocity -= air_density
               if horizontal_velocity <= 0:
                 horizontal_velocity = 0
-
             else:
               player.x += horizontal_velocity / 1.5
-              horizontal_velocity += air_density + gravityAcceleration
-
+              horizontal_velocity += air_density + gravity_acceleration
               if horizontal_velocity >= 0:
                horizontal_velocity = 0
 
@@ -220,12 +216,12 @@ def gameloop():
 
             # if velocity has hit or is equal to terminal_velocity
             if velocity <= -terminal_velocity:
-                velocity = -terminal_velocity * deltaTime
+                velocity = -terminal_velocity * delta_time
                 player.y -= velocity
 
                 # if velocity is less then terminal_velocity
             elif velocity > -terminal_velocity:
-                velocity -= gravityAcceleration * deltaTime / 1.05
+                velocity -= gravity_acceleration * delta_time / 1.05
                 player.y -= velocity
 
         # is a check to stop clipping through the bottom of the screen
@@ -240,12 +236,12 @@ def gameloop():
 
         # basic time delta script to calculate the delta between frames
         t = pygame.time.get_ticks()
-        deltaTime = (t - getTicksLastFrame) / 1000.0
-        getTicksLastFrame = t
+        delta_time = (t - get_ticks_last_frame) / 1000.0
+        get_ticks_last_frame = t
 
-        tick_count_displacement += deltaTime
-        acceleration_count += deltaTime
-        velocity_reset_tick += deltaTime
+        tick_count_displacement += delta_time
+        acceleration_count += delta_time
+        velocity_reset_tick += delta_time
 
         # Draw the white background onto the surface.
         windowSurface.fill((255, 255, 255))
@@ -254,9 +250,7 @@ def gameloop():
         displacement = math.sqrt((current_pos[0] - old_pos[0])**2 +
                                  (current_pos[1] - old_pos[1])**2)
         if displacement != 0:
-
             if displacement < -0:
-
                 acceleration_list.append(formula.inverse(displacement))
 
             else:
@@ -284,7 +278,7 @@ def gameloop():
 
             acceleration_list = []
             acceleration_count = 0
-
+  
             #button creation
         bd1 = pygame.Rect((current_width - 65), 5, 60, 30)
 
@@ -296,11 +290,11 @@ def gameloop():
         pygame.draw.rect(windowSurface, (0, 0, 0), player)
         #updates text on screen blits
         screens[0] = [
-            font.render('Delta Time:' + str(deltaTime), True, (0, 0, 0)),
+            font.render('Delta Time:' + str(delta_time), True, (0, 0, 0)),
             (0, 0)
         ]
         screens[1] = [
-            font.render('Gravity Acceleration:' + str(gravityAcceleration),
+            font.render('Gravity Acceleration:' + str(gravity_acceleration),
                         True, (0, 0, 0)), (0, round(15 * (width_size * height_size)))
         ]
 
