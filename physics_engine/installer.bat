@@ -3,7 +3,7 @@ cls
 color 1
 
 pip install pygame
-pip install tkinter
+pip install tk
 
 color 2
 

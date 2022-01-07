@@ -2,13 +2,11 @@ import pygame, sys, math, tkinter
 
 from Assets.forumulas import formulas as formula
 
-print(
-    'all code can be found on https://github.com/JGreyScales/School-11/tree/main/physics_engine',
-    '\n\n' + '-' * 50 +
-    '\nThe following program is a simple to use physics engine.'
-    '\nJust start by clicking or clicking and draging around the screen to summon or grab the block,' 
-    '\nafter this you can throw the block around or drop it, by unclicking. You can also change the gravity, mass, and air drag in the simulation by clicking the appropirate button and changing the value in the console.'
-)
+print('''Welcome to the physics engine that we've created. To use this program simply click onto the screen to move the box, drag and let go to throw the box. and finally 
+you can click the buttons in the top right to change variables on the box. statistics about what is happening will be displayed in the top left as well updating
+in realtime
+
+more can be found at https://github.com/JGreyScales/Python-Physics-Engine''')
 
 # function definements
 formula = formula()
@@ -40,29 +38,21 @@ def gameloop():
     width_size, height_size = 1,1
 
     #velocity
-    vertical_velocity = 0
-    horizontal_velocity = 0
+    vertical_velocity, horizontal_velocity = 0, 0
     
     # is a counter for when to reset velocity
     velocity_reset_tick = 0
 
     #acceleration
-    acceleration_count = 0
-    acceleration_list = []
-    acceleration = 0
+    acceleration_count, acceleration, acceleration_list = 0, 0, []
 
     #displacement
-    current_pos = player.center
-    old_pos = (0, 0)
-    displacement = 0.1
+    current_pos, old_pos, displacement = player.center, (0, 0), 0.1
     # is a counter to reset displacement amount
     tick_count_displacement = 0
 
     #gravity
-    mass = 300  #
-    delta_time = 0.0
-    gravity_acceleration = 9.81  #
-    velocity = 0
+    mass, delta_time, gravity_acceleration, velocity = 300, 0.0, 9.81, 0 
     air_density = 1.225  #
     projected_area = math.sqrt(list(player)[2] * list(player)[3])
     terminal_velocity = formula.calculate_terminal_velocity(
