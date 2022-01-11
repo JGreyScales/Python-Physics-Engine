@@ -3,6 +3,17 @@ from Assets.forumulas import formulas as formula
 
 user_text = ""
 
+
+print(
+    'all code can be found on https://github.com/JGreyScales/School-11/tree/main/physics_engine',
+    '\n\n' + '-' * 50 +
+    '\nThe following program is a simple to use physics engine.'
+    '\nJust start by clicking or clicking and dragging around the screen to summon or grab the block'
+    '\nafter this you can throw the block around or drop it, by unclicking. You can also change the gravity, mass, and air drag in the simulation by clicking the appropirate button found in the'
+    '\nupper right corner of the screen and changing the value by typing out your desiredvalues and'
+    '\nthen pressing enter.'
+)
+
 # function definements
 formula = formula()
 
@@ -57,6 +68,7 @@ def gameloop():
         mass, gravity_acceleration, 1.05, air_density, projected_area)
 
     #font to use for entire game
+    key_strokes = [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_PERIOD]
     font = pygame.font.Font('freesansbold.ttf', 15)
     button_font = pygame.font.Font('freesansbold.ttf', 10)
 
@@ -134,17 +146,13 @@ def gameloop():
                         dummy_text = ""
                         user_input = False
                     else:
-                        if event.key == pygame.K_0: user_text += "0"
-                        elif event.key == pygame.K_1: user_text += "1"
-                        elif event.key == pygame.K_2: user_text += "2"
-                        elif event.key == pygame.K_3: user_text += "3"
-                        elif event.key == pygame.K_4: user_text += "4"
-                        elif event.key == pygame.K_5: user_text += "5"
-                        elif event.key == pygame.K_6: user_text += "6"
-                        elif event.key == pygame.K_7: user_text += "7"
-                        elif event.key == pygame.K_8: user_text += "8"
-                        elif event.key == pygame.K_9: user_text += "9"
-                        elif event.key == pygame.K_PERIOD: user_text += "."
+                        for key in key_strokes:
+                            if event.key == key: 
+                                if key == pygame.K_PERIOD: user_text += '.'
+                                else: user_text += str(key_strokes.index(key))
+                                break
+
+
                     
 
 
@@ -171,7 +179,10 @@ def gameloop():
                     user_text = ""
                     dummy_text = ""
 
-                else: user_input = False
+                else: 
+                    user_input = False
+                    dummy_text = ""
+
             # checks if player is holding down left click
         if pygame.mouse.get_pressed()[0]:
             player.center = pygame.mouse.get_pos()
@@ -302,7 +313,8 @@ def gameloop():
             font.render('Gravity Acceleration:' + str(gravity_acceleration),
                         True, (0, 0, 0)), (0, round(15 * (width_size * height_size)))
         ]
-        screens[7] = [font.render(str(dummy_text), True, (0, 0, 0)), (round(current_width/2), round(current_height/2, 2))]
+        screens[7] = [font.render(str(dummy_text), True, (0, 0, 0)), (round(0), round(current_height/2, 2))]
+
         #updates displacement on change or every 0.35 seconds
         if displacement > 3 or displacement < 0 or tick_count_displacement > 0.35:
             screens[2] = [
