@@ -1,12 +1,17 @@
 import pygame, sys, math, tkinter
-
 from Assets.forumulas import formulas as formula
 
-print('''Welcome to the physics engine that we've created. To use this program simply click onto the screen to move the box, drag and let go to throw the box. and finally 
-you can click the buttons in the top right to change variables on the box. statistics about what is happening will be displayed in the top left as well updating
-in realtime
+user_text = ""
 
-more can be found at https://github.com/JGreyScales/Python-Physics-Engine''')
+print(
+    'all code can be found on https://github.com/JGreyScales/School-11/tree/main/physics_engine',
+    '\n\n' + '-' * 50 +
+    '\nThe following program is a simple to use physics engine.'
+    '\nJust start by clicking or clicking and dragging around the screen to summon or grab the block'
+    '\nafter this you can throw the block around or drop it, by unclicking. You can also change the gravity, mass, and air drag in the simulation by clicking the appropirate button found in the'
+    '\nupper right corner of the screen and changing the value by typing out your desiredvalues and'
+    '\nthen pressing enter.'
+)
 
 # function definements
 formula = formula()
@@ -31,7 +36,10 @@ current_height = start_height
 
 
 def gameloop():
-    global current_height, current_width
+    global current_height, current_width, user_text
+    user_input = False
+    button = 1
+    dummy_text = ""
     ## defines player start position and size (Width, Height)
     player = pygame.Rect(current_width // 2, current_height // 2, 20, 20)
     # UI
@@ -59,13 +67,14 @@ def gameloop():
         mass, gravity_acceleration, 1.05, air_density, projected_area)
 
     #font to use for entire game
+    key_strokes = [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_PERIOD]
     font = pygame.font.Font('freesansbold.ttf', 15)
     button_font = pygame.font.Font('freesansbold.ttf', 10)
 
     # temp strings to increase range of list
     screens = [
         'Time_delta', 'Gravity Acceleration', 'Displacement', 'acceleration',
-        'GA', 'MS', 'AD'
+        'GA', 'MS', 'AD', 'Text'
     ]
 
     # these screens in milliseconds not in frames so must be redefined before the render is called
@@ -109,55 +118,68 @@ def gameloop():
                 font = pygame.font.Font('freesansbold.ttf', round(15 * (width_size * height_size)))
                 button_font = pygame.font.Font('freesansbold.ttf', round(10 * (width_size * height_size)))
 
+
+            if user_input:
+                if button == 1: dummy_text = "Gravity Acceleration: " + str(user_text)
+                elif button == 2: dummy_text = "Mass: " + str(user_text)
+                else: dummy_text = "Air Density: " + str(user_text)
+                if event.type == pygame.KEYDOWN:
+                    # Check for backspace
+                    if event.key == pygame.K_BACKSPACE:
+        
+                        # get text input from 0 to -1 i.e. end.
+                        user_text = user_text[:-1]
+                    elif event.key == pygame.K_RETURN:
+                        if user_text == "":
+                            user_text = 0.1
+                        try: float(user_text)
+                        except: user_text = 0.1
+                        if user_text == 0: user_text = 0.1
+                        if button == 1: gravity_acceleration = float(user_text)
+                        elif button == 2: mass = float(user_text)
+                        else: air_density = float(user_text)
+                        
+                        terminal_velocity = formula.calculate_terminal_velocity(
+                            mass, gravity_acceleration, 1.05, air_density, projected_area)
+                        user_text = ""
+                        dummy_text = ""
+                        user_input = False
+                    else:
+                        for key in key_strokes:
+                            if event.key == key: 
+                                if key == pygame.K_PERIOD: user_text += '.'
+                                else: user_text += str(key_strokes.index(key))
+                                break
+
+                    
+
+
             #updates cube onto mouse position
             if event.type == pygame.MOUSEBUTTONDOWN:
-                #updates variable and recalculates terminal_velocity
-
+                #updates variable and recalculates terminal_velocit
                 if b1.collidepoint(event.pos):
-                    try:
-                        gravity_acceleration = float(
-                            input(
-                                "What do you want the Gravity Acceleration to be? "
-                            ))
-                        
-                    except (ValueError):
-                        print('Please use a float')
+                    user_input = True
+                    button = 1
+                    user_text = ""
+                    dummy_text = ""
+                
+                    
 
                 elif b2.collidepoint(event.pos):
-                  while True:
-                    try:
-                        mass = float(
-                            input("What do you want the Mass to be? "))
-                        if mass < 1:
-                          continue
-                        break
-            
-                    except (ValueError):
-                        print('please use a float')
+                    user_input = True
+                    button = 2
+                    user_text = ""
+                    dummy_text = ""
 
                 elif b3.collidepoint(event.pos):
-                  while True:
-                    try:
-                        air_density = float(
-                            input("What do you want the Air Density to be? "))
-                        if air_density < 1:
-                          continue
-                        break
+                    user_input = True
+                    button = 3
+                    user_text = ""
+                    dummy_text = ""
 
-                    except (ValueError):
-                        print('please use a float')
-
-                # physics object or "player" will move to mouse position and resets the velocity on object
-                else:
-                    player.center = pygame.mouse.get_pos()
-                    velocity = 0
-                    vertical_velocity = 0
-                    horizontal_velocity = 0
-                    
-                terminal_velocity = formula.calculate_terminal_velocity(
-                mass, gravity_acceleration, 1.05, air_density,
-                projected_area)
-
+                else: 
+                    user_input = False
+                    dummy_text = ""
             # checks if player is holding down left click
         if pygame.mouse.get_pressed()[0]:
             player.center = pygame.mouse.get_pos()
@@ -283,11 +305,12 @@ def gameloop():
             font.render('Delta Time:' + str(delta_time), True, (0, 0, 0)),
             (0, 0)
         ]
+        
         screens[1] = [
             font.render('Gravity Acceleration:' + str(gravity_acceleration),
                         True, (0, 0, 0)), (0, round(15 * (width_size * height_size)))
         ]
-
+        screens[7] = [font.render(str(dummy_text), True, (0, 0, 0)), (round(0), round(current_height/2, 2))]
         #updates displacement on change or every 0.35 seconds
         if displacement > 3 or displacement < 0 or tick_count_displacement > 0.35:
             screens[2] = [
@@ -324,8 +347,8 @@ def gameloop():
 
         # render loop (will iterate through all items that need to be rendered and render them)
         for i in range(len(screens)):
-          windowSurface.blit(screens[i][0], screens[i][1])
-
+            windowSurface.blit(screens[i][0], screens[i][1])
+            
 
             # Draw the window onto the screen.
         pygame.display.update()
