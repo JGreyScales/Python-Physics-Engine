@@ -3,6 +3,7 @@ from Assets.forumulas import formulas as formula
 
 user_text = ""
 
+
 print(
     'all code can be found on https://github.com/JGreyScales/School-11/tree/main/physics_engine',
     '\n\n' + '-' * 50 +
@@ -151,6 +152,7 @@ def gameloop():
                                 else: user_text += str(key_strokes.index(key))
                                 break
 
+
                     
 
 
@@ -180,6 +182,7 @@ def gameloop():
                 else: 
                     user_input = False
                     dummy_text = ""
+
             # checks if player is holding down left click
         if pygame.mouse.get_pressed()[0]:
             player.center = pygame.mouse.get_pos()
@@ -311,6 +314,7 @@ def gameloop():
                         True, (0, 0, 0)), (0, round(15 * (width_size * height_size)))
         ]
         screens[7] = [font.render(str(dummy_text), True, (0, 0, 0)), (round(0), round(current_height/2, 2))]
+
         #updates displacement on change or every 0.35 seconds
         if displacement > 3 or displacement < 0 or tick_count_displacement > 0.35:
             screens[2] = [
