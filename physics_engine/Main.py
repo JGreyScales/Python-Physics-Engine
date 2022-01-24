@@ -105,8 +105,8 @@ def gameloop():
 
         # Check for events.
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: sys.exit()
-
+            if event.type == pygame.KEYDOWN or event.type == pygame.QUIT:
+                if event.key == 27 or event.type == pygame.QUIT: sys.exit()
             if event.type == pygame.WINDOWSIZECHANGED:
                 current_width = windowSurface.get_size()[0]
                 current_height = windowSurface.get_size()[1]
@@ -127,7 +127,6 @@ def gameloop():
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
                     if event.key == pygame.K_BACKSPACE:
-        
                         # get text input from 0 to -1 i.e. end.
                         user_text = user_text[:-1]
                     elif event.key == pygame.K_RETURN:
