@@ -75,7 +75,7 @@ def gameloop():
     # temp strings to increase range of list
     screens = [
         'Time_delta', 'Gravity Acceleration', 'Displacement', 'acceleration',
-        'GA', 'MS', 'AD', 'Text'
+        'GA', 'MS', 'AD', 'Text', "user_help"
     ]
 
     # these screens in milliseconds not in frames so must be redefined before the render is called
@@ -106,7 +106,10 @@ def gameloop():
         # Check for events.
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN or event.type == pygame.QUIT:
-                if event.key == 27 or event.type == pygame.QUIT: sys.exit()
+                if event.key == 27 or event.type == pygame.QUIT:
+                    sys.exit()
+            
+
             if event.type == pygame.WINDOWSIZECHANGED:
                 current_width = windowSurface.get_size()[0]
                 current_height = windowSurface.get_size()[1]
@@ -127,6 +130,7 @@ def gameloop():
                 if event.type == pygame.KEYDOWN:
                     # Check for backspace
                     if event.key == pygame.K_BACKSPACE:
+        
                         # get text input from 0 to -1 i.e. end.
                         user_text = user_text[:-1]
                     elif event.key == pygame.K_RETURN:
@@ -313,6 +317,7 @@ def gameloop():
                         True, (0, 0, 0)), (0, round(15 * (width_size * height_size)))
         ]
         screens[7] = [font.render(str(dummy_text), True, (0, 0, 0)), (round(0), round(current_height/2, 2))]
+        screens[8] = [font.render("Click and drag on the screen to move the box, release to throw. Click the buttons on the right to change the variables", True, (0, 0, 0)), (round(current_width/4), 0)]
 
         #updates displacement on change or every 0.35 seconds
         if displacement > 3 or displacement < 0 or tick_count_displacement > 0.35:
